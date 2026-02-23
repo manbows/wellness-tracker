@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% if already_entered %}
+    <div id="step-6" class="step active">
+        <h2>See you tomorrow {{ name }}</h2>
+        <div id="chart-container">
+            <canvas id="myChart"></canvas>
+        </div>
+        <button type="button" onclick="toggleHistory()">See all past entries ↓</button>
+        <div id="history-table" style="display:none"></div>
+    </div>
+
+{% else %}
+<form id="main-form" action="/add" method="POST">
+    <div id="step-1" class="step">
+        <h1>Welcome.</h1>
+    <p>First of all, what's your name?</p>
+    <input 
+        type="text" 
+        name="name" 
+        id="name"
+        placeholder="Zach" 
+        maxlength="50" 
+        required
+    >
+    <button type="button" onclick="nextStep(2)">Continue</button>
+    </div>
+
+    <div id="step-2" class="step">
+
+    <h2>What three things are you grateful for today?</h2>
+    <input 
+        type="text" 
+        name="grateful_1" 
+        placeholder="First thing..." 
+        maxlength="150" 
+        required
+    >
+    <input 
+        type="text" 
+        name="grateful_2" 
+        placeholder="Second thing..." 
+        maxlength="150" 
+        required
+    >
+    <input 
+        type="text" 
+        name="grateful_3" 
+        placeholder="Third thing..." 
+        maxlength="150" 
+        required
+    >
+    <button type="button" onclick="nextStep(3)">Continue</button>
+
+    </div>
+
+    <div id="step-3" class="step">
+    <h2>What's three things are you praying for change about?</h2>
+    <input 
+        type="text" 
+        name="prayer_1" 
+        placeholder="First thing..." 
+        maxlength="150" 
+        required
+    >
+    <input 
+        type="text" 
+        name="prayer_2" 
+        placeholder="Second thing..." 
+        maxlength="150" 
+        required
+    >
+    <input 
+        type="text" 
+        name="prayer_3" 
+        placeholder="Third thing..." 
+        maxlength="150" 
+        required
+    >
+    <button type="button" onclick="nextStep(4)">Continue</button>
+    </div>
+
+    <div id="step-4" class="step">
+    <h2>How much are you loving life?</h2>
+    <div id="score-display">5</div>
+    <input 
+        type="range" 
+        name="score" 
+        id="score"
+        min="0" 
+        max="10" 
+        value="5"
+        oninput="document.getElementById('score-display').textContent = this.value"
+    >
+    <div id="score-labels">
+        <span>0</span>
+        <span>10</span>
+    </div>
+    <button type="submit">Submit →</button>
+    </div>
+</form>
+
+<div id="step-5" class="step">
+    <div id="animation-container">
+        <div id="spinner"></div>
+        <p>Reflecting...</p>
+    </div>
+</div>
+
+<div id="step-6" class="step">
+    <h2>Your journey so far</h2>
+    <div id="chart-container">
+        <canvas id="myChart"></canvas>
+    </div>
+    <button type="button" onclick="toggleHistory()">See all past entries ↓</button>
+    <div id="history-table" style="display:none">
+    </div>
+    <button type="button" onclick="resetForm()">Add another entry →</button>
+</div>
+{% endif %}
+
+
+{% endblock %}
