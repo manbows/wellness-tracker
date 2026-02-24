@@ -161,10 +161,8 @@ def index():
     already_entered, name = entry_exists_today()
     username = session.get("username")
     has_name = len(entries) > 0
-    print("SESSION:", dict(session))
-    print("has_name:", has_name)
-    return render_template("index.html", entries=entries, already_entered=already_entered, name=name, username=username, has_name=has_name)
-
+    display_name = session.get("name") or ""
+    return render_template("index.html", entries=entries, already_entered=already_entered, name=name, username=username, has_name=has_name, display_name=display_name)
 
 @app.route("/add", methods=["POST"])
 @login_required

@@ -7,24 +7,49 @@ function nextStep(stepNumber) {
     next.classList.add('active')
 }
 
-function loadChart() {
+function switchView(view, btn) {
+    document.querySelectorAll('.toggle-btn').forEach(function(b) {
+        b.classList.remove('active-toggle')
+    })
+    btn.classList.add('active-toggle')
+    if (window.myChartInstance) {
+        window.myChartInstance.destroy()
+    }
+    loadChart(view)
+}
+
+function loadChart(view = '30days') {
     fetch('/api/entries')
         .then(function(response) {
             return response.json()
         })
-        .then(function(entries) {
+        .then(function(allEntries) {
+            let entries = allEntries
+
+            if (view === '30days') {
+                const thirtyDaysAgo = new Date()
+                thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
+                entries = allEntries.filter(function(entry) {
+                    const entryDate = new Date(entry.date)
+                    return entryDate >= thirtyDaysAgo
+                })
+            }
+
             const labels = entries.map(function(entry) {
-    const date = new Date(entry.date)
-    return date.getDate()
-})
+                const date = new Date(entry.date)
+                return date.getDate()
+            })
 
             const scores = entries.map(function(entry) {
                 return entry.score
             })
 
+            const now = new Date()
+            const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate()
+
             const ctx = document.getElementById('myChart').getContext('2d')
 
-            new Chart(ctx, {
+            window.myChartInstance = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: labels,
@@ -35,14 +60,19 @@ function loadChart() {
                         backgroundColor: 'rgba(196, 113, 79, 0.1)',
                         borderWidth: 2,
                         pointBackgroundColor: '#C4714F',
-                        pointRadius: 6,
-                        pointHoverRadius: 8,
+                        pointRadius: 3,
+                        pointHoverRadius: 5,
                         tension: 0.4,
                         fill: true
                     }]
                 },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
+                    animation: {
+                        duration: 2000,
+                        easing: 'easeInOutQuart'
+                    },
                     scales: {
                         y: {
                             min: 0,
@@ -52,8 +82,14 @@ function loadChart() {
                             }
                         },
                         x: {
+                            type: 'linear',
+                            min: labels[0] || 1,
+                            max: lastDay,
                             grid: {
                                 display: false
+                            },
+                            ticks: {
+                                stepSize: 1
                             }
                         }
                     },
@@ -62,6 +98,8 @@ function loadChart() {
                             display: false
                         },
                         tooltip: {
+                            position: 'nearest',
+                            yAlign: 'bottom',
                             callbacks: {
                                 afterBody: function(context) {
                                     const entry = entries[context[0].dataIndex]
@@ -83,12 +121,15 @@ function loadChart() {
                     }
                 }
             })
+
+            document.getElementById('chart-container').classList.add('loaded')
+
         })
 }
 
 function toggleHistory() {
     const table = document.getElementById('history-table')
-    const btn = document.querySelector('#step-6 button')
+    const btn = document.querySelector('.step-6-btn')
     if (table.style.display === 'none') {
         table.style.display = 'block'
         fetch('/api/entries')

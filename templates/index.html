@@ -4,11 +4,16 @@
 
 {% if already_entered %}
     <div id="step-6" class="step active">
-        <h2>See you tomorrow {{ name }}</h2>
+        <h2>See you tomorrow</h2>
+
+     <div id="chart-toggle">
+            <button type="button" class="toggle-btn active-toggle" onclick="switchView('30days', this)">Last 30 days</button>
+            <button type="button" class="toggle-btn" onclick="switchView('alltime', this)">All time</button>
+        </div>
         <div id="chart-container">
             <canvas id="myChart"></canvas>
         </div>
-        <button type="button" onclick="toggleHistory()">See all past entries ↓</button>
+        <button type="button" class="step-6-btn" onclick="toggleHistory()">See all past entries ↓</button>
         <div id="history-table" style="display:none"></div>
     </div>
 
@@ -17,9 +22,9 @@
 
 {% if not has_name %}
         <div id="step-1" class="step">
-            <h1>Gratitude</h1>
-            <p>A moment to reflect on what matters.</p>
-            <input type="text" name="name" id="name" placeholder="What's your name?" maxlength="50" required>
+            <h1>First of all.</h1>
+            <p>What's your name?</p>
+            <input type="text" name="name" id="name" placeholder="Nia" maxlength="50" required>
             <button type="button" onclick="nextStep(2)">Begin →</button>
         </div>
 {% else %}
@@ -108,7 +113,12 @@
 </div>
 
 <div id="step-6" class="step">
-    <h2>Your journey so far</h2>
+    <h2>Here's your journey so far:</h2>
+
+    <div id="chart-toggle">
+    <button type="button" class="toggle-btn active-toggle" onclick="switchView('30days', this)">Last 30 days</button>
+    <button type="button" class="toggle-btn" onclick="switchView('alltime', this)">All time</button>
+</div>
     <div id="chart-container">
         <canvas id="myChart"></canvas>
     </div>
@@ -118,5 +128,5 @@
 </div>
 {% endif %}
 
-
+<a href="/logout" class="logout-link">Sign out</a>
 {% endblock %}
