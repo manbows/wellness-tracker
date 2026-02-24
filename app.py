@@ -4,6 +4,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import psycopg2
 import uuid
 import os
+from dotenv import load_dotenv
+load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = "gratitude-app"
@@ -49,7 +51,7 @@ init_db()
 
 def entry_exists_today():
     today = datetime.now().strftime("%d %b %Y")
-    user_id = session.get("user_id")
+    user_id = int(session.get("user_id"))
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute("SELECT id, name FROM entries WHERE date = %s AND user_id = %s", (today, user_id))
@@ -131,7 +133,7 @@ def logout():
 @app.route("/")
 @login_required
 def index():
-    user_id = session.get("user_id")
+    user_id = int(session.get("user_id"))
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM entries WHERE user_id = %s ORDER BY id DESC", (user_id,))
@@ -159,7 +161,7 @@ def index():
 @app.route("/add", methods=["POST"])
 @login_required
 def add_entry():
-    user_id = session.get("user_id")
+    user_id = int(session.get("user_id"))
 
     name = request.form.get("name", "").strip()[:50]
     if not name:
@@ -216,7 +218,7 @@ def delete_entry(entry_id):
 @app.route("/api/entries")
 @login_required
 def api_entries():
-    user_id = session.get("user_id")
+    user_id = int(session.get("user_id"))
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM entries WHERE user_id = %s ORDER BY id ASC", (user_id,))

@@ -282,3 +282,21 @@ button.secondary {
     font-size: 0.9rem;
     margin-top: 16px;
 }
+
+input[type="password"] {
+    width: 100%;
+    background: var(--white);
+    border: 1px solid var(--muted);
+    border-radius: 12px;
+    padding: 16px 20px;
+    font-family: 'Jost', sans-serif;
+    font-size: 1rem;
+    color: var(--warm-brown);
+    margin-bottom: 16px;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+input[type="password"]:focus {
+    border-color: var(--terracotta);
+}
