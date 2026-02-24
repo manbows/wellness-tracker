@@ -160,7 +160,10 @@ def index():
 
     already_entered, name = entry_exists_today()
     username = session.get("username")
-    return render_template("index.html", entries=entries, already_entered=already_entered, name=name, username=username)
+    has_name = len(entries) > 0
+    print("SESSION:", dict(session))
+    print("has_name:", has_name)
+    return render_template("index.html", entries=entries, already_entered=already_entered, name=name, username=username, has_name=has_name)
 
 
 @app.route("/add", methods=["POST"])
@@ -191,6 +194,7 @@ def add_entry():
         score = 5
 
     if all(grateful) and all(prayers):
+        session["name"] = name
         conn = get_db()
         cursor = conn.cursor()
         cursor.execute("""

@@ -11,14 +11,15 @@
     
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
-    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
 </head>
 <body>
 
     {% block content %}
     {% endblock %}
 
-    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 
 </body>
 </html>

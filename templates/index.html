@@ -15,16 +15,16 @@
 {% else %}
     <form id="main-form" action="/add" method="POST">
 
-        {% if not username %}
+{% if not has_name %}
         <div id="step-1" class="step">
-            <h1>Golden Hour</h1>
+            <h1>Gratitude</h1>
             <p>A moment to reflect on what matters.</p>
             <input type="text" name="name" id="name" placeholder="What's your name?" maxlength="50" required>
             <button type="button" onclick="nextStep(2)">Begin →</button>
         </div>
-        {% else %}
-        <input type="hidden" name="name" value="{{ username }}">
-        {% endif %}
+{% else %}
+<input type="hidden" name="name" value="{{ name or username }}">
+{% endif %}
 
     <div id="step-2" class="step">
 
