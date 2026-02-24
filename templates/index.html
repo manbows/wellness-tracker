@@ -13,20 +13,18 @@
     </div>
 
 {% else %}
-<form id="main-form" action="/add" method="POST">
-    <div id="step-1" class="step">
-        <h1>Welcome.</h1>
-    <p>First of all, what's your name?</p>
-    <input 
-        type="text" 
-        name="name" 
-        id="name"
-        placeholder="Zach" 
-        maxlength="50" 
-        required
-    >
-    <button type="button" onclick="nextStep(2)">Continue</button>
-    </div>
+    <form id="main-form" action="/add" method="POST">
+
+        {% if not username %}
+        <div id="step-1" class="step">
+            <h1>Golden Hour</h1>
+            <p>A moment to reflect on what matters.</p>
+            <input type="text" name="name" id="name" placeholder="What's your name?" maxlength="50" required>
+            <button type="button" onclick="nextStep(2)">Begin →</button>
+        </div>
+        {% else %}
+        <input type="hidden" name="name" value="{{ username }}">
+        {% endif %}
 
     <div id="step-2" class="step">
 
