@@ -98,24 +98,41 @@ function loadChart(view = '30days') {
                             display: false
                         },
                         tooltip: {
-                            position: 'nearest',
-                            yAlign: 'bottom',
-                            callbacks: {
-                                afterBody: function(context) {
-                                    const entry = entries[context[0].dataIndex]
-                                    return [
-                                        '',
-                                        'Grateful for:',
-                                        '• ' + entry.grateful[0],
-                                        '• ' + entry.grateful[1],
-                                        '• ' + entry.grateful[2],
-                                        '',
-                                        'Praying for:',
-                                        '• ' + entry.prayers[0],
-                                        '• ' + entry.prayers[1],
-                                        '• ' + entry.prayers[2]
-                                    ]
+                            enabled: false,
+                            external: function(context) {
+                                let tooltipEl = document.getElementById('custom-tooltip')
+                                if (!tooltipEl) {
+                                    tooltipEl = document.createElement('div')
+                                    tooltipEl.id = 'custom-tooltip'
+                                    document.body.appendChild(tooltipEl)
                                 }
+
+                                const tooltipModel = context.tooltip
+                                if (tooltipModel.opacity === 0) {
+                                    tooltipEl.style.opacity = '0'
+                                    return
+                                }
+
+                                const index = tooltipModel.dataPoints[0].dataIndex
+                                const entry = entries[index]
+
+                                tooltipEl.innerHTML = `
+                                    <p class="tt-date">${tooltipModel.title[0]}</p>
+                                    <p class="tt-score">Loving life: ${entry.score}</p>
+                                    <p class="tt-label">Grateful for:</p>
+                                    <p class="tt-item">• ${entry.grateful[0]}</p>
+                                    <p class="tt-item">• ${entry.grateful[1]}</p>
+                                    <p class="tt-item">• ${entry.grateful[2]}</p>
+                                    <p class="tt-label">Praying for:</p>
+                                    <p class="tt-item">• ${entry.prayers[0]}</p>
+                                    <p class="tt-item">• ${entry.prayers[1]}</p>
+                                    <p class="tt-item">• ${entry.prayers[2]}</p>
+                                `
+
+                                const position = context.chart.canvas.getBoundingClientRect()
+                                tooltipEl.style.opacity = '1'
+                                tooltipEl.style.left = position.left + window.scrollX + tooltipModel.caretX + 'px'
+                                tooltipEl.style.top = position.top + window.scrollY + tooltipModel.caretY - tooltipEl.offsetHeight + 10 + 'px'
                             }
                         }
                     }
