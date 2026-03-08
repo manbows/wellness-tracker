@@ -312,10 +312,9 @@ input[type="range"]::-webkit-slider-thumb:hover {
     }
 }
 
-.logout-link {
+.nav-link {
     position: fixed;
     top: 24px;
-    right: 24px;
     font-family: 'Jost', sans-serif;
     font-size: 0.8rem;
     color: var(--muted);
@@ -323,9 +322,19 @@ input[type="range"]::-webkit-slider-thumb:hover {
     transition: color 0.3s ease;
 }
 
-.logout-link:hover {
+.nav-link:hover {
     color: var(--terracotta);
 }
+
+.nav-link.logout {
+    right: 24px;
+}
+
+.nav-link.journey {
+    right: 100px;
+}
+
+
 
 #custom-tooltip {
     position: absolute;

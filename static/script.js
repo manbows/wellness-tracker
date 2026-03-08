@@ -217,3 +217,40 @@ document.addEventListener('DOMContentLoaded', function() {
         loadChart()
     }
 })
+
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('main-form')
+    const urlParams = new URLSearchParams(window.location.search)
+    const viewJourney = urlParams.get('view') === 'journey'
+
+    if (form) {
+        if (viewJourney) {
+            nextStep(6)
+            loadChart()
+        } else {
+            const hasName = form.querySelector('input[name="name"][type="hidden"]')
+            if (hasName) {
+                nextStep(2)
+            } else {
+                nextStep(1)
+            }
+        }
+        form.addEventListener('submit', function(e) {
+            e.preventDefault()
+            nextStep(5)
+            setTimeout(function() {
+                const formData = new FormData(form)
+                fetch('/add', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(function() {
+                    nextStep(6)
+                    loadChart()
+                })
+            }, 2500)
+        })
+    } else {
+        loadChart()
+    }
+})
