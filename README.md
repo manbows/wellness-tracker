@@ -16,6 +16,7 @@ Key features:
 - Line graph showing mood score over time (last 30 days or all time view)
 - Hover tooltips showing full journal entries on the graph
 - Expandable history of all past entries
+- Ability to backdate and add missing entries from previous days
 - Username and PIN authentication with persistent sessions across devices
 - Each user's data is completely private and separate
 - Fully responsive — works on mobile and desktop
@@ -59,7 +60,8 @@ wellness-tracker/
 ├── templates/
 │   ├── base.html           # Shared HTML foundation
 │   ├── index.html          # Main app — form and graph
-│   └── login.html          # Login and registration page
+│   ├── login.html          # Login and registration page
+│   └── backdate.html       # Add a missing past entry
 └── static/
     ├── style.css           # Golden hour aesthetic styling
     └── script.js           # Form navigation, chart, history
@@ -71,16 +73,16 @@ wellness-tracker/
 
 ### Authentication
 
-Users register with a username and 4-digit PIN. The PIN is hashed using `werkzeug.security` before being stored — plain text PINs are never saved. Sessions persist for 365 days so users stay logged in across devices and browsers.
+Users register with a username and 4-digit PIN. The PIN is hashed using `werkzeug.security` before being stored — plain text PINs are never saved. Sessions persist for 365 days so users stay logged in across devices and browsers. The app secret key is loaded from an environment variable and never hardcoded.
 
 ### Database
 
 Two tables:
 
-`users` — stores username and hashed PIN
+`users` — stores username and hashed PIN  
 `entries` — stores each daily journal entry linked to a user by `user_id`
 
-All queries are parameterised to prevent SQL injection.
+All queries are parameterised to prevent SQL injection. Delete operations verify `user_id` ownership before removing any record.
 
 ### Form flow
 
@@ -89,6 +91,10 @@ The multi-step form uses JavaScript to show and hide steps without page reloads.
 ### Graph
 
 Chart.js renders a line graph of the user's life scores over time. A custom external tooltip shows the full journal entry for each data point on hover. Users can toggle between the last 30 days and all-time views.
+
+### Backdating
+
+Users can add entries for days they missed via the `/backdate` route. The form prevents duplicate entries for the same date and blocks future dates. Accessible via the "+ Add a missing entry" link on the journey view.
 
 ---
 
@@ -120,6 +126,7 @@ Create a `.env` file in the project root:
 
 ```
 DATABASE_URL=your-postgresql-connection-string
+SECRET_KEY=your-secret-key
 ```
 
 **5. Run the app**
@@ -136,7 +143,7 @@ Visit `http://127.0.0.1:5000`
 
 The app is deployed on Railway with a PostgreSQL plugin. Every push to the `main` branch on GitHub triggers an automatic redeploy.
 
-Environment variables are set in the Railway dashboard under the service's Variables tab.
+Environment variables (`DATABASE_URL` and `SECRET_KEY`) are set in the Railway dashboard under the service's Variables tab.
 
 ---
 
@@ -146,17 +153,17 @@ This project was built as part of a Python and Web Development Skills Bootcamp. 
 
 - Building a full-stack web app from scratch with Flask
 - Designing and querying a relational database with SQL
-- Implementing user authentication with hashed credentials
+- Implementing user authentication with hashed credentials and secure session management
 - Using AJAX and the Fetch API to avoid page reloads
 - Deploying a production app with a persistent cloud database
 - Managing environment variables and keeping secrets out of version control
 - Git version control and GitHub workflow
+- Securing routes against unauthorised data access (ownership checks on delete)
 
 ---
 
 ## Future features
 
 - Streak counter showing consecutive days of entries
-- Ability to backdate missed days
 - Weekly summary view
 - Email reminders

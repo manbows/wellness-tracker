@@ -218,6 +218,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 2500)
         })
     } else {
-        loadChart()
+        requestAnimationFrame(function() {
+            loadChart()
+        })
     }
 })
