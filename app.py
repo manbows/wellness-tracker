@@ -216,7 +216,6 @@ def add_entry():
 
     return redirect(url_for("index"))
 
-
 @app.route("/delete/<int:entry_id>", methods=["POST"])
 @login_required
 def delete_entry(entry_id):
@@ -327,3 +326,5 @@ def api_entries():
 
 if __name__ == "__main__":
     app.run(debug=False, host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+
+
