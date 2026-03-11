@@ -216,6 +216,7 @@ def add_entry():
 
     return redirect(url_for("index"))
 
+
 @app.route("/delete/<int:entry_id>", methods=["POST"])
 @login_required
 def delete_entry(entry_id):
@@ -298,13 +299,14 @@ def backdate():
     return render_template("backdate.html", error=error, success=success, username=username)
 
 
+
 @app.route("/api/entries")
 @login_required
 def api_entries():
     user_id = int(session.get("user_id"))
     conn = get_db()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM entries WHERE user_id = %s ORDER BY id ASC", (user_id,))
+    cursor.execute("SELECT * FROM entries WHERE user_id = %s", (user_id,))
     rows = cursor.fetchall()
     cursor.close()
     conn.close()
@@ -320,6 +322,9 @@ def api_entries():
             "prayers": [row[7], row[8], row[9]],
             "score": row[10]
         })
+
+    # Sort by actual date — text format "11 Mar 2026" can't be sorted alphabetically
+    entries.sort(key=lambda e: datetime.strptime(e["date"], "%d %b %Y"))
 
     return jsonify(entries)
 
