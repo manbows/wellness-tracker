@@ -2,13 +2,12 @@ from flask import Flask, render_template, request, redirect, url_for, jsonify, s
 from datetime import datetime, timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
 import psycopg2
-import uuid
 import os
 from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = "gratitude-app"
+app.secret_key = os.environ.get("SECRET_KEY", os.urandom(24))
 app.permanent_session_lifetime = timedelta(days=365)
 
 
@@ -139,6 +138,7 @@ def logout():
 @login_required
 def index():
     user_id = int(session.get("user_id"))
+    username = session.get("username")
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM entries WHERE user_id = %s ORDER BY id DESC", (user_id,))
@@ -159,19 +159,27 @@ def index():
         })
 
     already_entered, name = entry_exists_today()
-    username = session.get("username")
     has_name = len(entries) > 0
-    display_name = session.get("name") or ""
-    return render_template("index.html", entries=entries, already_entered=already_entered, name=name, username=username, has_name=has_name, display_name=display_name)
+
+    return render_template(
+        "index.html",
+        entries=entries,
+        already_entered=already_entered,
+        name=name,
+        username=username,
+        has_name=has_name
+    )
+
 
 @app.route("/add", methods=["POST"])
 @login_required
 def add_entry():
     user_id = int(session.get("user_id"))
+    username = session.get("username")
 
     name = request.form.get("name", "").strip()[:50]
     if not name:
-        return redirect(url_for("index"))
+        name = username
 
     grateful = [
         request.form.get("grateful_1", "").strip()[:150],
@@ -192,7 +200,6 @@ def add_entry():
         score = 5
 
     if all(grateful) and all(prayers):
-        session["name"] = name
         conn = get_db()
         cursor = conn.cursor()
         cursor.execute("""
@@ -213,9 +220,11 @@ def add_entry():
 @app.route("/delete/<int:entry_id>", methods=["POST"])
 @login_required
 def delete_entry(entry_id):
+    user_id = int(session.get("user_id"))
     conn = get_db()
     cursor = conn.cursor()
-    cursor.execute("DELETE FROM entries WHERE id = %s", (entry_id,))
+    # Only delete if the entry belongs to the logged-in user
+    cursor.execute("DELETE FROM entries WHERE id = %s AND user_id = %s", (entry_id, user_id))
     conn.commit()
     cursor.close()
     conn.close()
@@ -246,7 +255,6 @@ def api_entries():
         })
 
     return jsonify(entries)
-
 
 
 if __name__ == "__main__":
