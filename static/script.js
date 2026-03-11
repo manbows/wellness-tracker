@@ -19,6 +19,13 @@ function switchView(view, btn) {
     loadChart(view)
 }
 
+function parseEntryDate(dateStr) {
+    // Converts "11 Mar 2026" to a valid Date — new Date() can't parse this reliably cross-browser
+    const months = { Jan:0, Feb:1, Mar:2, Apr:3, May:4, Jun:5, Jul:6, Aug:7, Sep:8, Oct:9, Nov:10, Dec:11 }
+    const parts = dateStr.split(' ')
+    return new Date(parseInt(parts[2]), months[parts[1]], parseInt(parts[0]))
+}
+
 function loadChart(view = '30days') {
     fetch('/api/entries')
         .then(function(response) {
@@ -31,13 +38,13 @@ function loadChart(view = '30days') {
                 const thirtyDaysAgo = new Date()
                 thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
                 entries = allEntries.filter(function(entry) {
-                    const entryDate = new Date(entry.date)
+                    const entryDate = parseEntryDate(entry.date)
                     return entryDate >= thirtyDaysAgo
                 })
             }
 
             const labels = entries.map(function(entry) {
-                const date = new Date(entry.date)
+                const date = parseEntryDate(entry.date)
                 return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })
             })
 
@@ -158,7 +165,7 @@ function toggleHistory() {
                 const reversed = entries.slice().reverse()
                 let html = ''
                 reversed.forEach(function(entry) {
-                    const date = new Date(entry.date)
+                    const date = parseEntryDate(entry.date)
                     const formatted = date.toLocaleDateString('en-GB', {
                         weekday: 'long',
                         day: 'numeric',
