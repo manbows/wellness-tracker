@@ -6,6 +6,17 @@ A full-stack wellness app for daily gratitude journaling and mood tracking. Buil
 
 ---
 
+## Preview
+
+![Login](static/images/login.png)
+![Add Gratitude Points](static/images/gratitude.png)
+![Add Prayer Points](static/images/prayers.png)
+![Rating](static/images/rating.png)
+![Results/Journey](static/images/results.png)
+![Missed Day](static/images/missedday.png)
+
+---
+
 ## What it does
 
 Gratitude is a personal daily reflection tool. Each day, users record three things they're grateful for, three things they're praying or hoping for, and a life score out of 10. The app tracks this over time and visualises progress as a line graph.
